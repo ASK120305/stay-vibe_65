@@ -17,7 +17,8 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    /* Brand */
+    --primary: 258 84% 60%; /* Vibrant violet brand */
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -53,6 +54,19 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Brand enhancements */
+    --primary-glow: 258 92% 72%;
+    --primary-variant: 280 70% 62%;
+
+    /* Gradients & Shadows */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--accent)));
+    --shadow-elevated: 0 16px 40px -12px hsl(var(--primary) / 0.25);
+    --shadow-glow: 0 0 0 3px hsl(var(--primary) / 0.18);
+
+    /* Surfaces */
+    --surface-glass: hsl(var(--background) / 0.6);
   }
 
   .dark {
@@ -91,6 +105,11 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Dark enhancements */
+    --primary-glow: 258 92% 72%;
+    --primary-variant: 280 70% 62%;
+    --surface-glass: hsl(var(--background) / 0.4);
   }
 }
 
@@ -102,4 +121,43 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Utilities & motion tokens */
+@layer utilities {
+  .bg-hero {
+    background: var(--gradient-hero);
+    background-size: 200% 200%;
+  }
+  .glass {
+    background-color: var(--surface-glass);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border));
+  }
+  .card-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+  .btn-hero {
+    background: var(--gradient-hero);
+    color: hsl(var(--primary-foreground));
+    box-shadow: var(--shadow-elevated);
+  }
+  .btn-hero:hover {
+    filter: brightness(1.05);
+  }
+  .ring-glow {
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+/* Signature motion */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  animation: gradient-shift 14s ease infinite;
 }
