@@ -24,6 +24,16 @@ const SiteHeader = () => {
                 Digital Check-in
               </NavLink>
             </li>
+            <li>
+              <NavLink to="/auth" className={({isActive}) => isActive ? "text-primary" : "text-muted-foreground hover:text-foreground transition-colors"}>
+                Login / Sign up
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/owner" className={({isActive}) => isActive ? "text-primary" : "text-muted-foreground hover:text-foreground transition-colors"}>
+                Owner Portal
+              </NavLink>
+            </li>
           </ul>
         </nav>
       </div>
