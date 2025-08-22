@@ -1,6 +1,8 @@
 import { Helmet } from "react-helmet-async";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useAuth } from "@/contexts/AuthContext";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,7 +22,15 @@ type AuthFormValues = {
 };
 
 const Auth = () => {
+  const navigate = useNavigate();
+  const { login, signup, isLoading, isAuthenticated } = useAuth();
   const [role, setRole] = useState<Role>("customer");
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
   const formSignIn = useForm<AuthFormValues>({
     defaultValues: { email: "", password: "" },
   });
@@ -28,12 +38,36 @@ const Auth = () => {
     defaultValues: { name: "", email: "", password: "" },
   });
 
-  const onSubmit = (values: AuthFormValues, mode: "signin" | "signup") => {
-    console.log(mode, role, values);
-    toast({
-      title: mode === "signin" ? "Signed in (UI only)" : "Account created (UI only)",
-      description: `Role: ${role}. No backend connected.`,
-    });
+  const onSubmitSignIn = async (values: AuthFormValues) => {
+    try {
+      await login(values.email, values.password, role);
+      toast({
+        title: "Login successful!",
+        description: `Welcome back, ${values.email.split("@")[0]}!`,
+      });
+    } catch (error) {
+      toast({
+        title: "Login failed",
+        description: "Please check your credentials and try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const onSubmitSignUp = async (values: AuthFormValues) => {
+    try {
+      await signup(values.name || "", values.email, values.password, role);
+      toast({
+        title: "Account created!",
+        description: `Welcome to StayVibe, ${values.name}!`,
+      });
+    } catch (error) {
+      toast({
+        title: "Signup failed",
+        description: "Please try again with different credentials.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -72,7 +106,7 @@ const Auth = () => {
 
               <TabsContent value="signin" className="mt-6">
                 <form
-                  onSubmit={formSignIn.handleSubmit((v) => onSubmit(v, "signin"))}
+                  onSubmit={formSignIn.handleSubmit(onSubmitSignIn)}
                   className="grid gap-4"
                 >
                   <Form {...formSignIn}>
@@ -102,14 +136,16 @@ const Auth = () => {
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" className="mt-2">Continue</Button>
+                    <Button type="submit" className="mt-2" disabled={isLoading}>
+                      {isLoading ? "Signing in..." : "Continue"}
+                    </Button>
                   </Form>
                 </form>
               </TabsContent>
 
               <TabsContent value="signup" className="mt-6">
                 <form
-                  onSubmit={formSignUp.handleSubmit((v) => onSubmit(v, "signup"))}
+                  onSubmit={formSignUp.handleSubmit(onSubmitSignUp)}
                   className="grid gap-4"
                 >
                   <Form {...formSignUp}>
@@ -152,7 +188,9 @@ const Auth = () => {
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" className="mt-2">Create account</Button>
+                    <Button type="submit" className="mt-2" disabled={isLoading}>
+                      {isLoading ? "Creating account..." : "Create account"}
+                    </Button>
                   </Form>
                 </form>
               </TabsContent>

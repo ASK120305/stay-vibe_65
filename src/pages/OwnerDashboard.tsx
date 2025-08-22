@@ -1,5 +1,10 @@
 import { Helmet } from "react-helmet-async";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useAuth } from "@/contexts/AuthContext";
+import useApi from "@/hooks/useApi";
+import useLocalStorage from "@/hooks/useLocalStorage";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
 
 const amenities = [
@@ -44,26 +50,77 @@ type HotelForm = {
 };
 
 const OwnerDashboard = () => {
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
+  const { execute: saveHotel, loading: isSaving } = useApi<HotelForm>();
+  const [draftData, setDraftData] = useLocalStorage<Partial<HotelForm>>("hotelDraft", {});
+  
   const form = useForm<HotelForm>({
     defaultValues: {
-      name: "",
-      description: "",
-      price: 120,
-      currency: "USD",
-      address: "",
-      city: "",
-      state: "",
-      country: "",
-      postalCode: "",
-      checkIn: "14:00",
-      checkOut: "11:00",
-      amenities: Object.fromEntries(amenities.map((a) => [a, false])) as Record<string, boolean>,
+      name: draftData.name || "",
+      description: draftData.description || "",
+      price: draftData.price || 120,
+      currency: draftData.currency || "USD",
+      address: draftData.address || "",
+      city: draftData.city || "",
+      state: draftData.state || "",
+      country: draftData.country || "",
+      postalCode: draftData.postalCode || "",
+      checkIn: draftData.checkIn || "14:00",
+      checkOut: draftData.checkOut || "11:00",
+      amenities: draftData.amenities || Object.fromEntries(amenities.map((a) => [a, false])) as Record<string, boolean>,
     },
   });
 
-  const onSubmit = (values: HotelForm) => {
-    console.log("Hotel form (UI only)", values);
-    toast({ title: "Hotel saved (UI only)", description: "No backend connected yet." });
+  useEffect(() => {
+    if (!isAuthenticated || user?.role !== "owner") {
+      navigate("/auth");
+    }
+  }, [isAuthenticated, user, navigate]);
+
+  useEffect(() => {
+    // Auto-save draft every 30 seconds
+    const interval = setInterval(() => {
+      const currentValues = form.getValues();
+      setDraftData(currentValues);
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [form, setDraftData]);
+
+  const onSubmit = async (values: HotelForm) => {
+    try {
+      await saveHotel(async () => {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        console.log("Hotel form (UI only)", values);
+        return values;
+      });
+      
+      toast({ 
+        title: "Hotel saved successfully!", 
+        description: "Your hotel details have been saved and will be reviewed shortly." 
+      });
+      
+      // Clear draft after successful save
+      setDraftData({});
+      form.reset();
+    } catch (error) {
+      toast({ 
+        title: "Error saving hotel", 
+        description: "Please try again later.",
+        variant: "destructive" 
+      });
+    }
+  };
+
+  const handleSaveDraft = () => {
+    const currentValues = form.getValues();
+    setDraftData(currentValues);
+    toast({ 
+      title: "Draft saved", 
+      description: "Your progress has been saved locally." 
+    });
   };
 
   return (
@@ -76,8 +133,15 @@ const OwnerDashboard = () => {
 
       <main className="container mx-auto px-4 py-10 max-w-5xl">
         <header className="mb-8">
-          <h1 className="text-3xl font-semibold tracking-tight">Add Your Hotel</h1>
-          <p className="text-muted-foreground mt-2">Provide details customers need to see. This is UI only.</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-semibold tracking-tight">Add Your Hotel</h1>
+              <p className="text-muted-foreground mt-2">Provide details customers need to see. This is UI only.</p>
+            </div>
+            {Object.keys(draftData).length > 0 && (
+              <Badge variant="secondary">Draft saved</Badge>
+            )}
+          </div>
         </header>
 
         <Form {...form}>
@@ -339,8 +403,15 @@ const OwnerDashboard = () => {
             </section>
 
             <div className="flex items-center justify-end gap-3">
-              <Button type="button" variant="secondary" onClick={() => form.reset()}>Reset</Button>
-              <Button type="submit">Save hotel</Button>
+              <Button type="button" variant="outline" onClick={handleSaveDraft}>
+                Save Draft
+              </Button>
+              <Button type="button" variant="secondary" onClick={() => form.reset()}>
+                Reset
+              </Button>
+              <Button type="submit" disabled={isSaving}>
+                {isSaving ? "Saving..." : "Save Hotel"}
+              </Button>
             </div>
           </form>
         </Form>

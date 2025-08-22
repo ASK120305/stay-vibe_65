@@ -1,6 +1,9 @@
 import { Link, NavLink } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 
 const SiteHeader = () => {
+  const { user, isAuthenticated, logout } = useAuth();
   return (
     <header className="sticky top-0 z-40 w-full">
       <div className="glass">
@@ -24,16 +27,33 @@ const SiteHeader = () => {
                 Digital Check-in
               </NavLink>
             </li>
-            <li>
-              <NavLink to="/auth" className={({isActive}) => isActive ? "text-primary" : "text-muted-foreground hover:text-foreground transition-colors"}>
-                Login / Sign up
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/owner" className={({isActive}) => isActive ? "text-primary" : "text-muted-foreground hover:text-foreground transition-colors"}>
-                Owner Portal
-              </NavLink>
-            </li>
+            {!isAuthenticated ? (
+              <li>
+                <NavLink to="/auth" className={({isActive}) => isActive ? "text-primary" : "text-muted-foreground hover:text-foreground transition-colors"}>
+                  Login / Sign up
+                </NavLink>
+              </li>
+            ) : (
+              <>
+                <li>
+                  <span className="text-sm text-muted-foreground">
+                    Hello, {user?.name}
+                  </span>
+                </li>
+                {user?.role === "owner" && (
+                  <li>
+                    <NavLink to="/owner" className={({isActive}) => isActive ? "text-primary" : "text-muted-foreground hover:text-foreground transition-colors"}>
+                      Owner Portal
+                    </NavLink>
+                  </li>
+                )}
+                <li>
+                  <Button variant="outline" size="sm" onClick={logout}>
+                    Logout
+                  </Button>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
       </div>

@@ -1,9 +1,22 @@
 import { Helmet } from "react-helmet-async";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import useWindowSize from "@/hooks/useWindowSize";
 import heroImage from "@/assets/hero-hotel.jpg";
 import SearchForm from "@/components/search/SearchForm";
 import { CheckCircle2, MapPin, CalendarDays, Users } from "lucide-react";
 
 const Index = () => {
+  const { user } = useAuth();
+  const { width } = useWindowSize();
+  const [isVisible, setIsVisible] = useState(false);
+  const isMobile = width ? width < 768 : false;
+
+  useEffect(() => {
+    // Fade in animation on mount
+    const timer = setTimeout(() => setIsVisible(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <main>
       <Helmet>
@@ -18,21 +31,32 @@ const Index = () => {
           <img src={heroImage} alt="Luxury hotel lobby with warm lighting" className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/40 to-background" />
         </div>
-        <div className="relative container mx-auto flex min-h-[72vh] flex-col items-center justify-center text-center gap-8">
-          <h1 className="max-w-3xl text-4xl md:text-5xl font-bold leading-tight">
-            Book Your Next Stay with Confidence
+        <div className={`relative container mx-auto flex min-h-[72vh] flex-col items-center justify-center text-center gap-8 transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+          <h1 className="max-w-3xl text-4xl md:text-5xl font-bold leading-tight animate-fade-in">
+            {user ? `Welcome back, ${user.name}!` : 'Book Your Next Stay with Confidence'}
           </h1>
-          <p className="max-w-2xl text-lg text-muted-foreground">
-            Sleek, modern hotels curated for comfort. Search across top destinations and preview rooms before you book.
+          <p className="max-w-2xl text-lg text-muted-foreground animate-fade-in">
+            {user?.role === 'owner' 
+              ? 'Manage your hotels and grow your business with StayVibe.'
+              : 'Sleek, modern hotels curated for comfort. Search across top destinations and preview rooms before you book.'
+            }
           </p>
           <div className="w-full max-w-4xl rounded-xl border bg-background/80 p-4 shadow-xl glass">
             <SearchForm compact />
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2"><CheckCircle2 className="text-primary" />Free cancellation</div>
-            <div className="flex items-center gap-2"><MapPin className="text-primary" />Top locations</div>
-            <div className="flex items-center gap-2"><CalendarDays className="text-primary" />Flexible dates</div>
-            <div className="flex items-center gap-2"><Users className="text-primary" />Group-friendly</div>
+          <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-4'} gap-6 text-sm text-muted-foreground`}>
+            <div className="flex items-center gap-2 animate-fade-in">
+              <CheckCircle2 className="text-primary" />Free cancellation
+            </div>
+            <div className="flex items-center gap-2 animate-fade-in">
+              <MapPin className="text-primary" />Top locations
+            </div>
+            <div className="flex items-center gap-2 animate-fade-in">
+              <CalendarDays className="text-primary" />Flexible dates
+            </div>
+            <div className="flex items-center gap-2 animate-fade-in">
+              <Users className="text-primary" />Group-friendly
+            </div>
           </div>
         </div>
       </section>

@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { SearchProvider } from "@/contexts/SearchContext";
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import Index from "./pages/Index";
@@ -20,22 +22,26 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <HelmetProvider>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <SiteHeader />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/search" element={<SearchResults />} />
-            <Route path="/hotel/:id" element={<HotelDetail />} />
-            <Route path="/check-in" element={<CheckIn />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/owner" element={<OwnerDashboard />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <SiteFooter />
-        </BrowserRouter>
+        <AuthProvider>
+          <SearchProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <SiteHeader />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/search" element={<SearchResults />} />
+                <Route path="/hotel/:id" element={<HotelDetail />} />
+                <Route path="/check-in" element={<CheckIn />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/owner" element={<OwnerDashboard />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <SiteFooter />
+            </BrowserRouter>
+          </SearchProvider>
+        </AuthProvider>
       </TooltipProvider>
     </HelmetProvider>
   </QueryClientProvider>
