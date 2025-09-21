@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { SearchProvider } from "@/contexts/SearchContext";
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import SearchResults from "./pages/SearchResults";
@@ -15,6 +16,9 @@ import HotelDetail from "./pages/HotelDetail";
 import CheckIn from "./pages/CheckIn";
 import Auth from "./pages/Auth";
 import OwnerDashboard from "./pages/OwnerDashboard";
+import BookingConfirmation from "./pages/BookingConfirmation";
+import Payment from "./pages/Payment";
+import BookingSuccess from "./pages/BookingSuccess";
 
 const queryClient = new QueryClient();
 
@@ -32,9 +36,16 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/search" element={<SearchResults />} />
                 <Route path="/hotel/:id" element={<HotelDetail />} />
+                <Route path="/booking-confirmation/:id" element={<BookingConfirmation />} />
+                <Route path="/payment" element={<Payment />} />
+                <Route path="/booking-success" element={<BookingSuccess />} />
                 <Route path="/check-in" element={<CheckIn />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/owner" element={<OwnerDashboard />} />
+                <Route path="/owner" element={
+                  <ProtectedRoute requiredRole="owner">
+                    <OwnerDashboard />
+                  </ProtectedRoute>
+                } />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

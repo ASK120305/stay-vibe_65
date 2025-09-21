@@ -13,6 +13,7 @@ export type Hotel = {
   rating: number;
   pricePerNight: number;
   image: string;
+  amenities?: string[];
 };
 
 const HotelCard = ({ hotel }: { hotel: Hotel }) => {

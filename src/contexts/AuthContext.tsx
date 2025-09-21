@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import axios from "axios";
 
 type UserRole = "customer" | "owner";
 
@@ -17,6 +18,11 @@ interface AuthContextType {
   signup: (name: string, email: string, password: string, role: UserRole) => Promise<void>;
   logout: () => void;
 }
+
+// Configure axios defaults
+const API_BASE_URL = "http://localhost:5000/api";
+axios.defaults.baseURL = API_BASE_URL;
+axios.defaults.withCredentials = true;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
