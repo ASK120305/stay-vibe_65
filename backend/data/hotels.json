@@ -1,0 +1,132 @@
+{
+  "hotels": [
+    {
+      "_id": "1758464830263",
+      "policies": {
+        "checkIn": "15:00",
+        "checkOut": "11:00",
+        "cancellation": "Free cancellation"
+      },
+      "description": "A test hotel for development",
+      "priceRange": {
+        "min": 100,
+        "max": 200
+      },
+      "amenities": [
+        "Free Wi-Fi",
+        "Pool"
+      ],
+      "name": "Test Hotel",
+      "address": {
+        "street": "123 Test St",
+        "city": "Test City",
+        "state": "TS",
+        "country": "Test Country",
+        "zipCode": "12345"
+      },
+      "starRating": 3,
+      "phone": "1234567890",
+      "email": "test@hotel.com",
+      "manager": "mock-user-id",
+      "isActive": true,
+      "averageRating": 4.5,
+      "totalReviews": 25,
+      "authenticityCertificate": {
+        "public_id": "sample_cert_1",
+        "url": "https://example.com/certificate1.jpg",
+        "uploadedAt": "2025-01-21T14:27:10.263Z"
+      },
+      "isVerified": true,
+      "createdAt": "2025-09-21T14:27:10.263Z",
+      "updatedAt": "2025-09-21T14:27:10.263Z"
+    },
+    {
+      "_id": "1758464830264",
+      "policies": {
+        "checkIn": "14:00",
+        "checkOut": "12:00",
+        "cancellation": "Free cancellation up to 24 hours"
+      },
+      "description": "Luxury hotel in downtown Miami with ocean views",
+      "priceRange": {
+        "min": 189,
+        "max": 350
+      },
+      "amenities": [
+        "Free Wi-Fi",
+        "Swimming Pool",
+        "Fitness Center",
+        "Restaurant",
+        "Spa & Wellness"
+      ],
+      "name": "Grand Boulevard",
+      "address": {
+        "street": "456 Ocean Drive",
+        "city": "Miami",
+        "state": "FL",
+        "country": "United States",
+        "zipCode": "33139"
+      },
+      "starRating": 4,
+      "phone": "+1-305-555-0123",
+      "email": "info@grandboulevard.com",
+      "manager": "mock-user-id",
+      "isActive": true,
+      "averageRating": 4.7,
+      "totalReviews": 142,
+      "authenticityCertificate": {
+        "public_id": "sample_cert_2",
+        "url": "https://example.com/certificate2.jpg",
+        "uploadedAt": "2025-01-20T10:15:30.000Z"
+      },
+      "isVerified": true,
+      "createdAt": "2025-01-20T10:15:30.000Z",
+      "updatedAt": "2025-01-21T14:27:10.263Z"
+    },
+    {
+      "_id": "1758464830265",
+      "policies": {
+        "checkIn": "16:00",
+        "checkOut": "11:00",
+        "cancellation": "Free cancellation up to 48 hours"
+      },
+      "description": "Mountain resort with ski-in/ski-out access",
+      "priceRange": {
+        "min": 249,
+        "max": 500
+      },
+      "amenities": [
+        "Free Wi-Fi",
+        "Spa & Wellness",
+        "Restaurant",
+        "Parking",
+        "Ski Storage"
+      ],
+      "name": "Alpine Lodge",
+      "address": {
+        "street": "789 Mountain View Road",
+        "city": "Aspen",
+        "state": "CO",
+        "country": "United States",
+        "zipCode": "81611"
+      },
+      "starRating": 5,
+      "phone": "+1-970-555-0456",
+      "email": "reservations@alpinelodge.com",
+      "manager": "mock-user-id",
+      "isActive": true,
+      "averageRating": 4.8,
+      "totalReviews": 89,
+      "authenticityCertificate": {
+        "public_id": "sample_cert_3",
+        "url": "https://example.com/certificate3.jpg",
+        "uploadedAt": "2025-01-19T08:30:15.000Z"
+      },
+      "isVerified": true,
+      "createdAt": "2025-01-19T08:30:15.000Z",
+      "updatedAt": "2025-01-21T14:27:10.263Z"
+    }
+  ],
+  "bookings": [],
+  "notifications": []
+}

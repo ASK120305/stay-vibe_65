@@ -127,6 +127,18 @@ const hotelSchema = new mongoose.Schema({
       type: Number,
       default: 0
     }
+  },
+  authenticityCertificate: {
+    public_id: String,
+    url: String,
+    uploadedAt: {
+      type: Date,
+      default: Date.now
+    }
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true,

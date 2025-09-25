@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Heart } from "lucide-react";
+import { Star, Heart, Shield } from "lucide-react";
 import useFavorites from "@/hooks/useFavorites";
 import useWindowSize from "@/hooks/useWindowSize";
 
@@ -14,6 +14,9 @@ export type Hotel = {
   pricePerNight: number;
   image: string;
   amenities?: string[];
+  isVerified?: boolean;
+  description?: string;
+  starRating?: number;
 };
 
 const HotelCard = ({ hotel }: { hotel: Hotel }) => {
@@ -72,8 +75,16 @@ const HotelCard = ({ hotel }: { hotel: Hotel }) => {
       </div>
       <CardContent className="p-4">
         <div className="flex items-start justify-between gap-2">
-          <div>
-            <h3 className="text-lg font-semibold leading-tight">{hotel.name}</h3>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="text-lg font-semibold leading-tight">{hotel.name}</h3>
+              {hotel.isVerified && (
+                <div className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                  <Shield className="w-3 h-3" />
+                  <span>Verified</span>
+                </div>
+              )}
+            </div>
             <p className="text-sm text-muted-foreground">{hotel.location}</p>
           </div>
           <div className="flex items-center gap-1 text-sm">

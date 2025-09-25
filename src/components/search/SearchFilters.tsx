@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearch } from "@/contexts/SearchContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -26,6 +26,13 @@ const SearchFilters = () => {
   const [localPriceRange, setLocalPriceRange] = useState(filters.priceRange);
   const [localAmenities, setLocalAmenities] = useState(filters.amenities);
   const [localRating, setLocalRating] = useState(filters.rating);
+
+  // Sync local state with context state
+  useEffect(() => {
+    setLocalPriceRange(filters.priceRange);
+    setLocalAmenities(filters.amenities);
+    setLocalRating(filters.rating);
+  }, [filters.priceRange, filters.amenities, filters.rating]);
 
   const handlePriceChange = (value: number[]) => {
     setLocalPriceRange([value[0], value[1]]);

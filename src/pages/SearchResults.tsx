@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { useState, useEffect } from "react";
 import { useSearch } from "@/contexts/SearchContext";
 import useDebounce from "@/hooks/useDebounce";
+import useApi from "@/hooks/useApi";
 import SearchForm from "@/components/search/SearchForm";
 import SearchFilters from "@/components/search/SearchFilters";
 import HotelCard, { Hotel } from "@/components/hotels/HotelCard";
@@ -9,15 +10,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Filter } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 import hotel1 from "@/assets/hotel-1.jpg";
 import hotel2 from "@/assets/hotel-2.jpg";
 import hotel3 from "@/assets/hotel-3.jpg";
 
-const hotels: Hotel[] = [
-  { id: "grand-boulevard", name: "Grand Boulevard", location: "Miami, FL", rating: 4.7, pricePerNight: 189, image: hotel1, amenities: ["Free Wi-Fi", "Swimming Pool", "Fitness Center", "Restaurant"] },
-  { id: "alpine-lodge", name: "Alpine Lodge", location: "Aspen, CO", rating: 4.8, pricePerNight: 249, image: hotel2, amenities: ["Free Wi-Fi", "Spa & Wellness", "Restaurant", "Parking"] },
-  { id: "cityscape-hotel", name: "Cityscape Hotel", location: "New York, NY", rating: 4.6, pricePerNight: 209, image: hotel3, amenities: ["Free Wi-Fi", "Business Center", "Room Service", "Fitness Center"] },
-];
+// Function to get default hotel image based on hotel name
+const getDefaultHotelImage = (hotelName: string) => {
+  const name = hotelName.toLowerCase();
+  if (name.includes('fern')) return hotel1;
+  if (name.includes('bhavna') || name.includes('bar')) return hotel2;
+  if (name.includes('test')) return hotel3;
+  return hotel1; // Default fallback
+};
 
 const SearchResults = () => {
   const { filters, isSearching, setIsSearching } = useSearch();
@@ -25,48 +30,90 @@ const SearchResults = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const debouncedFilters = useDebounce(filters, 500);
+  const { execute: searchHotelsApi } = useApi();
 
   useEffect(() => {
     const searchHotels = async () => {
       setIsLoading(true);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsSearching(true);
       
-      // Filter hotels based on search criteria
-      let results = hotels;
-      
-      if (debouncedFilters.location) {
-        results = results.filter(hotel => 
-          hotel.location.toLowerCase().includes(debouncedFilters.location.toLowerCase())
-        );
-      }
-      
-      if (debouncedFilters.priceRange) {
-        results = results.filter(hotel => 
-          hotel.pricePerNight >= debouncedFilters.priceRange[0] && 
-          hotel.pricePerNight <= debouncedFilters.priceRange[1]
-        );
-      }
+      try {
+        // Build query parameters
+        const queryParams = new URLSearchParams();
+        
+        console.log('Search filters:', debouncedFilters);
+        
+        if (debouncedFilters.location) {
+          queryParams.append('city', debouncedFilters.location);
+        }
+        
+        if (debouncedFilters.priceRange) {
+          queryParams.append('minPrice', debouncedFilters.priceRange[0].toString());
+          queryParams.append('maxPrice', debouncedFilters.priceRange[1].toString());
+        }
 
-      if (debouncedFilters.rating) {
-        results = results.filter(hotel => hotel.rating >= debouncedFilters.rating!);
-      }
+        if (debouncedFilters.rating) {
+          queryParams.append('minRating', debouncedFilters.rating.toString());
+        }
 
-      if (debouncedFilters.amenities.length > 0) {
-        results = results.filter(hotel => 
-          debouncedFilters.amenities.every(amenity => 
-            hotel.amenities?.includes(amenity)
-          )
-        );
+        if (debouncedFilters.amenities.length > 0) {
+          queryParams.append('amenities', debouncedFilters.amenities.join(','));
+        }
+
+        console.log('Query params:', queryParams.toString());
+
+        // Call the backend API
+        const response = await searchHotelsApi(async () => {
+          const url = `/api/hotels?${queryParams.toString()}`;
+          console.log('Fetching from URL:', url);
+          
+          const response = await fetch(url);
+          console.log('Response status:', response.status);
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API Error:', errorText);
+            throw new Error(`Failed to fetch hotels: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          console.log('API Response:', data);
+          return data;
+        });
+
+        // Transform backend data to frontend format
+        const hotels: Hotel[] = response.data.hotels.map((hotel: any) => ({
+          id: hotel._id,
+          name: hotel.name,
+          location: `${hotel.address.city}, ${hotel.address.state || hotel.address.country}`,
+          rating: hotel.averageRating || 0,
+          pricePerNight: hotel.priceRange?.min || 0,
+          image: hotel.images?.[0]?.url || getDefaultHotelImage(hotel.name),
+          amenities: hotel.amenities || [],
+          description: hotel.description,
+          starRating: hotel.starRating,
+          isVerified: hotel.isVerified || false
+        }));
+
+        setFilteredHotels(hotels);
+      } catch (error) {
+        console.error('Error searching hotels:', error);
+        // Fallback to empty results on error
+        setFilteredHotels([]);
+        // Show error message to user
+        toast({
+          title: "Search Error",
+          description: "Failed to load hotels. Please try again.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+        setIsSearching(false);
       }
-      
-      setFilteredHotels(results);
-      setIsLoading(false);
-      setIsSearching(false);
     };
 
     searchHotels();
-  }, [debouncedFilters, setIsSearching]);
+  }, [debouncedFilters, setIsSearching, searchHotelsApi]);
   return (
     <main className="container mx-auto py-10">
       <Helmet>
