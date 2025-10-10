@@ -19,6 +19,37 @@ import OwnerDashboard from "./pages/OwnerDashboard";
 import BookingConfirmation from "./pages/BookingConfirmation";
 import Payment from "./pages/Payment";
 import BookingSuccess from "./pages/BookingSuccess";
+import { useToast } from "@/components/ui/use-toast";
+import { useWebSocket } from "@/hooks/useWebSocket";
+import ChatWidget from "@/components/chat/ChatWidget";
+
+const RealtimeClient = () => {
+  const { toast } = useToast();
+  useWebSocket({
+    onMessage: (msg) => {
+      switch (msg.type) {
+        case "BOOKING_STATUS_UPDATE":
+          toast({
+            title: `Booking ${msg.newStatus}`,
+            description: msg.message || `Booking ${msg.bookingId} status updated`,
+          });
+          break;
+        case "PRICE_ALERT":
+          toast({
+            title: "Price alert",
+            description: `Room ${msg.roomId} changed from ${msg.oldPrice} to ${msg.newPrice}`,
+          });
+          break;
+        case "SUPPORT_MESSAGE":
+          toast({ title: `Support: ${msg.sender}`, description: msg.content });
+          break;
+        default:
+          break;
+      }
+    },
+  });
+  return null;
+};
 
 const queryClient = new QueryClient();
 
@@ -32,6 +63,7 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <SiteHeader />
+              <RealtimeClient />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/search" element={<SearchResults />} />
@@ -50,6 +82,7 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <SiteFooter />
+              <ChatWidget />
             </BrowserRouter>
           </SearchProvider>
         </AuthProvider>

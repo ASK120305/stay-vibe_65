@@ -1,0 +1,44 @@
+services:
+  # Frontend Service (Vercel will handle this, but keeping for reference)
+  - type: web
+    name: stayvibe-frontend
+    env: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  # Backend Service
+  - type: web
+    name: stayvibe-backend
+    env: node
+    plan: starter
+    buildCommand: cd backend && npm ci
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        fromDatabase:
+          name: stayvibe-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+
+databases:
+  - name: stayvibe-db
+    plan: starter
+    databaseName: stayvibe
+    user: stayvibe_user

@@ -10,6 +10,8 @@ import dotenv from 'dotenv';
 import connectDB from './config/database.js';
 import logger from './utils/logger.js';
 import errorHandler from './middleware/errorHandler.js';
+import http from 'http';
+import { setupWebSocketServer } from './realtime/websocket.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -18,11 +20,22 @@ import roomRoutes from './routes/rooms.js';
 import bookingRoutes from './routes/bookings.js';
 import reviewRoutes from './routes/reviews.js';
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const server = http.createServer(app);
 
 // Connect to MongoDB
 connectDB();
@@ -80,6 +93,16 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// WebSocket test endpoint
+app.get('/api/ws-test', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'WebSocket server is running',
+    wsUrl: `ws://localhost:${PORT}/ws`,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/hotels', hotelRoutes);
@@ -98,8 +121,9 @@ app.all('*', (req, res) => {
 // Global error handling middleware
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
+// Start HTTP and WebSocket servers
+setupWebSocketServer(server);
+server.listen(PORT, () => {
   logger.info(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
 });
 

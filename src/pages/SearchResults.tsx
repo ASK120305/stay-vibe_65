@@ -82,7 +82,7 @@ const SearchResults = () => {
         });
 
         // Transform backend data to frontend format
-        const hotels: Hotel[] = response.data.hotels.map((hotel: any) => ({
+        const hotels: Hotel[] = response.data.hotels.map((hotel: Record<string, unknown>) => ({
           id: hotel._id,
           name: hotel.name,
           location: `${hotel.address.city}, ${hotel.address.state || hotel.address.country}`,

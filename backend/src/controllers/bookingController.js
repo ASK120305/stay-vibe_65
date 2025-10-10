@@ -4,6 +4,7 @@ import Hotel from '../models/Hotel.js';
 import User from '../models/User.js';
 import logger from '../utils/logger.js';
 import { sendEmail } from '../utils/email.js';
+import { emitBookingStatusUpdate } from '../realtime/websocket.js';
 
 // @desc    Get all bookings
 // @route   GET /api/bookings
@@ -319,6 +320,12 @@ export const updateBooking = async (req, res, next) => {
 
     logger.info(`Booking updated: ${booking.bookingReference} by ${req.user.email}`);
 
+    try {
+      emitBookingStatusUpdate(booking.user.toString(), booking._id.toString(), booking.status, 'Your booking was updated');
+    } catch (e) {
+      logger.warn('Failed to emit booking update WS event');
+    }
+
     res.status(200).json({
       status: 'success',
       data: {
@@ -385,6 +392,12 @@ export const cancelBooking = async (req, res, next) => {
 
     logger.info(`Booking cancelled: ${booking.bookingReference} by ${req.user.email}`);
 
+    try {
+      emitBookingStatusUpdate(booking.user.toString(), booking._id.toString(), 'cancelled', 'Your booking was cancelled');
+    } catch (e) {
+      logger.warn('Failed to emit booking cancel WS event');
+    }
+
     res.status(200).json({
       status: 'success',
       message: 'Booking cancelled successfully',
@@ -434,6 +447,12 @@ export const checkInBooking = async (req, res, next) => {
 
     logger.info(`Booking checked in: ${booking.bookingReference} by ${req.user.email}`);
 
+    try {
+      emitBookingStatusUpdate(booking.user.toString(), booking._id.toString(), 'checked-in', 'You have been checked in');
+    } catch (e) {
+      logger.warn('Failed to emit booking check-in WS event');
+    }
+
     res.status(200).json({
       status: 'success',
       message: 'Guest checked in successfully',
@@ -482,6 +501,12 @@ export const checkOutBooking = async (req, res, next) => {
     await booking.checkOut();
 
     logger.info(`Booking checked out: ${booking.bookingReference} by ${req.user.email}`);
+
+    try {
+      emitBookingStatusUpdate(booking.user.toString(), booking._id.toString(), 'checked-out', 'You have been checked out');
+    } catch (e) {
+      logger.warn('Failed to emit booking check-out WS event');
+    }
 
     res.status(200).json({
       status: 'success',
