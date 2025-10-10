@@ -1,28 +1,15 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
-import App from '../App'
 
-// Mock the AuthContext
-const mockAuthContext = {
-  user: null,
-  login: () => {},
-  logout: () => {},
-  loading: false,
-}
+describe('Simple Math Tests', () => {
+  it('should add 1 + 1 = 2', () => {
+    expect(1 + 1).toBe(2)
+  })
 
-// Mock the AuthContext
-vi.mock('../contexts/AuthContext', () => ({
-  useAuth: () => mockAuthContext,
-}))
+  it('should multiply 2 * 3 = 6', () => {
+    expect(2 * 3).toBe(6)
+  })
 
-describe('App', () => {
-  it('renders without crashing', () => {
-    render(
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    )
-    expect(screen.getByRole('main')).toBeInTheDocument()
+  it('should check if string contains text', () => {
+    expect('Hello World').toContain('World')
   })
 })

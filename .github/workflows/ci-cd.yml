@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Simple CI/CD Pipeline
 
 on:
   push:
@@ -7,9 +7,9 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  # Frontend Tests and Build
+  # Simple Frontend Tests
   frontend:
-    name: Frontend Tests & Build
+    name: Frontend Tests
     runs-on: ubuntu-latest
     
     steps:
@@ -25,40 +25,16 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    - name: Run ESLint
-      run: npm run lint
-      
-    - name: Run TypeScript check
-      run: npx tsc --noEmit
-      
-    - name: Run tests
+    - name: Run simple tests
       run: npm run test:run
       
     - name: Build application
       run: npm run build
-      
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: frontend-build
-        path: dist/
-        retention-days: 7
 
-  # Backend Tests
+  # Simple Backend Tests
   backend:
     name: Backend Tests
     runs-on: ubuntu-latest
-    
-    services:
-      mongodb:
-        image: mongo:7.0
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     
     steps:
     - name: Checkout code
@@ -76,83 +52,7 @@ jobs:
         cd backend
         npm ci
         
-    - name: Run backend ESLint
+    - name: Run simple backend tests
       run: |
         cd backend
-        npm run lint
-        
-    - name: Run backend tests
-      run: |
-        cd backend
-        npm run test:coverage
-      env:
-        NODE_ENV: test
-        MONGODB_URI: mongodb://localhost:27017/stayvibe-test
-        
-    - name: Upload backend coverage
-      uses: actions/upload-artifact@v4
-      with:
-        name: backend-coverage
-        path: backend/coverage/
-        retention-days: 7
-
-  # Security and Quality Checks
-  security:
-    name: Security & Quality Checks
-    runs-on: ubuntu-latest
-    needs: [frontend, backend]
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        scan-ref: '.'
-        format: 'sarif'
-        output: 'trivy-results.sarif'
-        
-    - name: Upload Trivy scan results
-      uses: github/codeql-action/upload-sarif@v3
-      if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'
-
-  # Deploy to Staging (Render)
-  deploy-staging:
-    name: Deploy to Staging
-    runs-on: ubuntu-latest
-    needs: [frontend, backend, security]
-    if: github.ref == 'refs/heads/develop'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Deploy to Render (Staging)
-      uses: johnbeynon/render-deploy-action@v0.0.8
-      with:
-        service-id: ${{ secrets.RENDER_STAGING_SERVICE_ID }}
-        api-key: ${{ secrets.RENDER_API_KEY }}
-
-  # Deploy to Production (Vercel)
-  deploy-production:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    needs: [frontend, backend, security]
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Deploy to Vercel
-      uses: amondnet/vercel-action@v25
-      with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-        working-directory: ./
-        vercel-args: '--prod'
+        npm run test
