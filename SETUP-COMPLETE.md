@@ -10,8 +10,8 @@
   - Uses `ws://localhost:5000/ws` for local WebSocket
   
 - ✅ **`frontend/.env.production`** - Production configuration
-  - Uses `https://stay-vibe-65.onrender.com/api` for Render backend
-  - Uses `wss://stay-vibe-65.onrender.com/ws` for secure WebSocket
+  - Uses `https://stay-vibe-65-1.onrender.com/api` for Render backend
+  - Uses `wss://stay-vibe-65-1.onrender.com/ws` for secure WebSocket
 
 #### Backend Environment File
 - ✅ **`backend/.env`** - Production configuration template
@@ -67,8 +67,8 @@ Go to [Vercel Dashboard](https://vercel.com/dashboard) → Your Project → Sett
 
 Add these:
 ```bash
-VITE_API_URL=https://stay-vibe-65.onrender.com/api
-VITE_WS_URL=wss://stay-vibe-65.onrender.com/ws
+VITE_API_URL=https://stay-vibe-65-1.onrender.com/api
+VITE_WS_URL=wss://stay-vibe-65-1.onrender.com/ws
 VITE_APP_NAME=StayVibe
 VITE_APP_VERSION=1.0.0
 ```
@@ -216,7 +216,7 @@ Refer to:
 
 **Deployment URLs:**
 - Frontend: https://stay-vibe-65.vercel.app
-- Backend: https://stay-vibe-65.onrender.com
+- Backend: https://stay-vibe-65-1.onrender.com
 - Repository: https://github.com/ASK120305/stay-vibe_65
 
 ---

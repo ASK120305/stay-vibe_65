@@ -8,8 +8,8 @@
 Set these environment variables in Vercel Dashboard → Settings → Environment Variables:
 
 ```bash
-VITE_API_URL=https://stay-vibe-65.onrender.com/api
-VITE_WS_URL=wss://stay-vibe-65.onrender.com/ws
+VITE_API_URL=https://stay-vibe-65-1.onrender.com/api
+VITE_WS_URL=wss://stay-vibe-65-1.onrender.com/ws
 VITE_APP_NAME=StayVibe
 VITE_APP_VERSION=1.0.0
 ```
@@ -119,7 +119,7 @@ Copy the output and use them in your environment variables.
 6. Add all environment variables from checklist above
 7. Click "Create Web Service"
 8. Wait for deployment (first deploy takes ~5-10 minutes)
-9. Verify deployment: `https://stay-vibe-65.onrender.com/api/health` (if you have health endpoint)
+9. Verify deployment: `https://stay-vibe-65-1.onrender.com/api/health` (if you have health endpoint)
 
 ### Frontend (Vercel)
 1. ✅ Code already pushed to GitHub
@@ -142,7 +142,7 @@ Copy the output and use them in your environment variables.
 ## ✅ Post-Deployment Verification
 
 ### Backend Health Checks
-- [ ] Backend is accessible: `https://stay-vibe-65.onrender.com`
+- [ ] Backend is accessible: `https://stay-vibe-65-1.onrender.com`
 - [ ] Database connection works
 - [ ] API endpoints respond correctly
 - [ ] CORS is configured correctly (check browser console)
@@ -248,7 +248,7 @@ Vercel will auto-deploy on push.
 ## ✨ Your Deployment URLs
 
 - **Frontend**: https://stay-vibe-65.vercel.app
-- **Backend**: https://stay-vibe-65.onrender.com
+- **Backend**: https://stay-vibe-65-1.onrender.com
 - **Repository**: https://github.com/ASK120305/stay-vibe_65
 
 ---

@@ -10,9 +10,9 @@ export default defineConfig(({ mode }) => ({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'https://stay-vibe-65.onrender.com',
+        target: 'https://stay-vibe-65-1.onrender.com',
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
     },
   },

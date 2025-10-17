@@ -10,7 +10,8 @@ interface UseWebSocketOptions {
   onMessage?: (msg: ServerMessage) => void;
 }
 
-const WS_BASE = (import.meta.env.VITE_WS_URL as string) || "wss://stay-vibe-65.onrender.com/ws";
+// WebSocket base URL - from environment variable or default
+const WS_BASE = (import.meta.env.VITE_WS_URL as string) || "wss://stay-vibe-65-1.onrender.com/ws";
 
 // Global WebSocket instance to prevent multiple connections
 let globalWS: WebSocket | null = null;

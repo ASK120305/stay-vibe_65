@@ -20,7 +20,8 @@ interface AuthContextType {
 }
 
 // Configure axios defaults
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://stay-vibe-65.onrender.com/api";
+// API base URL configuration
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://stay-vibe-65-1.onrender.com/api";
 axios.defaults.baseURL = API_BASE_URL;
 axios.defaults.withCredentials = true;
 

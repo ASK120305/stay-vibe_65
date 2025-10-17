@@ -9,7 +9,7 @@
 4. Add each variable:
    - Click "Add New"
    - Enter **Key** (e.g., `VITE_API_URL`)
-   - Enter **Value** (e.g., `https://stay-vibe-65.onrender.com/api`)
+   - Enter **Value** (e.g., `https://stay-vibe-65-1.onrender.com/api`)
    - Select environments: **Production**, **Preview**, **Development**
    - Click "Save"
 5. Repeat for all variables
@@ -17,8 +17,8 @@
 
 #### Variables to Add:
 ```
-VITE_API_URL=https://stay-vibe-65.onrender.com/api
-VITE_WS_URL=wss://stay-vibe-65.onrender.com/ws
+VITE_API_URL=https://stay-vibe-65-1.onrender.com/api
+VITE_WS_URL=wss://stay-vibe-65-1.onrender.com/ws
 VITE_APP_NAME=StayVibe
 VITE_APP_VERSION=1.0.0
 ```
