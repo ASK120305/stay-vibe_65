@@ -8,9 +8,8 @@ const connectDB = async () => {
       : process.env.MONGODB_URI;
 
     const conn = await mongoose.connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      // Remove deprecated options that are causing errors
+      // Removed deprecated options (useNewUrlParser, useUnifiedTopology)
+      // These are no longer needed in MongoDB driver v4.0.0+
     });
 
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
